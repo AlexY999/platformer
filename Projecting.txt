@@ -1,0 +1,29 @@
+ScoreManager
+ - CurrentScore
+ - AddScore(score)
+ - ResetScore()
+ - ScoreChangedEvent
+ 
+ Player
+ - Speed
+ - JumpForce
+ - DoubleJump
+ - SlidingSpeed
+ - ForceAttackSpeed
+ - Lives
+ - Mana Point
+ - Controlling
+ - OnTriggerEnter2D
+ 
+ Enemy
+ - ScorePoint
+ - EnemyType
+ - OnEnemyDieEvent
+ 
+ LevelController
+ - StartLevel
+ - CheckLevelComplecation
+ - OnLevelCompleted
+ - OnPlayerDieHandler
+ - OnEnemyDieHandler
+ 
