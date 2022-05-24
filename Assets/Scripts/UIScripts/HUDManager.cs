@@ -16,11 +16,11 @@ public class HUDManager : MonoBehaviour
     {
         sceneChanger.gameObject.SetActive(true);
         sceneChanger.StartSceneChange(gameObject);
-        Invoke(nameof(LoadGameScene), 1.5f);
+        Invoke(nameof(LoadMenuScene), 1.5f);
         AudioManager.Instance().OnButtonClickPlayAudioClip();
     }
 
-    private void LoadGameScene()
+    private void LoadMenuScene()
     {
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync("MenuScene");
         asyncLoad.completed += OnMenuSceneLoadCompleted;

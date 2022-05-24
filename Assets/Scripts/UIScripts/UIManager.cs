@@ -49,8 +49,10 @@ public class UIManager : MonoBehaviour
     {
         sceneChanger.gameObject.SetActive(true);
         sceneChanger.StartSceneChange(pages[0].gameObject);
+        Invoke(nameof(LoadGameScene), 1.5f);
+        AudioManager.Instance().OnButtonClickPlayAudioClip();
     }
-    
+
     private void Awake()
     {
         if (_instance == null)

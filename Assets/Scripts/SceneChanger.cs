@@ -17,7 +17,7 @@ public class SceneChanger : MonoBehaviour
 
     public void StartSceneChange()
     {
-        StartCoroutine("FadeOutUIElements");
+        StartCoroutine(nameof(FadeOutUIElements));
     }
 
     IEnumerator FadeInUIElements(GameObject window)
