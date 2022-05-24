@@ -1,10 +1,6 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 public class HUDManager : MonoBehaviour
 {
@@ -20,7 +16,7 @@ public class HUDManager : MonoBehaviour
     {
         sceneChanger.gameObject.SetActive(true);
         sceneChanger.StartSceneChange(gameObject);
-        Invoke("LoadGameScene", 1.5f);
+        Invoke(nameof(LoadGameScene), 1.5f);
         AudioManager.Instance().OnButtonClickPlayAudioClip();
     }
 
@@ -32,7 +28,7 @@ public class HUDManager : MonoBehaviour
 
     private void OnMenuSceneLoadCompleted(AsyncOperation obj)
     {
-        SceneChanger sceneChanger = GameObject.Find("LoadingWindow").GetComponent<SceneChanger>();
-        sceneChanger.StartSceneChange();
+        SceneChanger changer = GameObject.Find("LoadingWindow").GetComponent<SceneChanger>();
+        changer.StartSceneChange();
     }
 }

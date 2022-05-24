@@ -1,40 +1,63 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using UnityEngine.UIElements;
-using Button = UnityEngine.UI.Button;
-using Image = UnityEngine.UI.Image;
-using Toggle = UnityEngine.UIElements.Toggle;
 
 public class UIManager : MonoBehaviour
 {
-    [SerializeField] private List<RectTransform> Pages;
+    [SerializeField] private List<RectTransform> pages;
     [SerializeField] private SceneChanger sceneChanger;
-    [SerializeField] private int CurrentPage = 0;
-    [SerializeField] private float PageTransitionDuration = 1f;
-    [SerializeField] private AnimationCurve TransitionCurve;
+    [SerializeField] private int currentPage = 0;
+    [SerializeField] private float pageTransitionDuration = 1f;
+    [SerializeField] private AnimationCurve transitionCurve;
 
     private Vector3 _position;
     private Coroutine _transitionCoroutine;
 
-    private static UIManager instance;
+    private static UIManager _instance;
 
     public static UIManager Instance()
     {
-        return instance;
+        return _instance;
     }
 
+    public void OnButtonClisk()
+    {
+        AudioManager.Instance().OnButtonClickPlayAudioClip();
+    }
+
+    public void PreviousPage()
+    {
+        if (currentPage > 0)
+        {
+            currentPage--;
+            Transition(currentPage + 1, currentPage, false);
+        }
+    }
+
+    public void NextPage()
+    {
+        if (currentPage < pages.Count - 1)
+        {
+            currentPage++;
+            Transition(currentPage - 1, currentPage, true);
+        }
+    }
+
+    public void GoToGameScene()
+    {
+        sceneChanger.gameObject.SetActive(true);
+        sceneChanger.StartSceneChange(pages[0].gameObject);
+    }
+    
     private void Awake()
     {
-        if (instance == null)
+        if (_instance == null)
         {
-            instance = this;
+            _instance = this;
         }
-        else if (instance == this)
+        else if (_instance == this)
         {
             Destroy(gameObject);
         }
@@ -48,36 +71,7 @@ public class UIManager : MonoBehaviour
     private void Initialization()
     {
         OffAllPages();
-        Pages[0].gameObject.SetActive(true);
-    }
-
-    public void OnButtonClisk()
-    {
-        AudioManager.Instance().OnButtonClickPlayAudioClip();
-    }
-
-    public void PreviousPage()
-    {
-        if (CurrentPage > 0)
-        {
-            CurrentPage--;
-            Transition(CurrentPage + 1, CurrentPage, false);
-        }
-    }
-
-    public void NextPage()
-    {
-        if (CurrentPage < Pages.Count - 1)
-        {
-            CurrentPage++;
-            Transition(CurrentPage - 1, CurrentPage, true);
-        }
-    }
-
-    public void GoToGameScene()
-    {
-        sceneChanger.gameObject.SetActive(true);
-        sceneChanger.StartSceneChange(Pages[0].gameObject);
+        pages[0].gameObject.SetActive(true);
     }
 
     private void LoadGameScene()
@@ -88,8 +82,8 @@ public class UIManager : MonoBehaviour
 
     private void OnMenuSceneLoadCompleted(AsyncOperation obj)
     {
-        SceneChanger sceneChanger = GameObject.Find("LoadingWindow").GetComponent<SceneChanger>();
-        sceneChanger.StartSceneChange();
+        SceneChanger changer = GameObject.Find("LoadingWindow").GetComponent<SceneChanger>();
+        changer.StartSceneChange();
     }
 
     private void Transition(int previous, int next, bool goingRight)
@@ -106,28 +100,28 @@ public class UIManager : MonoBehaviour
     {
         float screenWidth = gameObject.GetComponent<RectTransform>().rect.width;
 
-        _position.y = Pages[previous].localPosition.y;
-        _position.z = Pages[previous].localPosition.z;
+        _position.y = pages[previous].localPosition.y;
+        _position.z = pages[previous].localPosition.z;
 
-        Pages[next].gameObject.SetActive(true);
+        pages[next].gameObject.SetActive(true);
         UnBlockAllButtons(false);
         
         float timeSpent = 0f;
-        while (timeSpent < PageTransitionDuration)
+        while (timeSpent < pageTransitionDuration)
         {
             if (goingRight)
             {
-                _position.x = Mathf.Lerp(0f, -screenWidth, TransitionCurve.Evaluate(timeSpent/PageTransitionDuration));
-                Pages[previous].localPosition = _position;
-                _position.x = Mathf.Lerp(screenWidth, 0f, TransitionCurve.Evaluate(timeSpent/PageTransitionDuration));
-                Pages[next].localPosition = _position;
+                _position.x = Mathf.Lerp(0f, -screenWidth, transitionCurve.Evaluate(timeSpent/pageTransitionDuration));
+                pages[previous].localPosition = _position;
+                _position.x = Mathf.Lerp(screenWidth, 0f, transitionCurve.Evaluate(timeSpent/pageTransitionDuration));
+                pages[next].localPosition = _position;
             }
             else
             {
-                _position.x = Mathf.Lerp(0f, screenWidth, TransitionCurve.Evaluate(timeSpent/PageTransitionDuration));
-                Pages[previous].localPosition = _position;
-                _position.x = Mathf.Lerp(-screenWidth, 0f, TransitionCurve.Evaluate(timeSpent/PageTransitionDuration));
-                Pages[next].localPosition = _position;
+                _position.x = Mathf.Lerp(0f, screenWidth, transitionCurve.Evaluate(timeSpent/pageTransitionDuration));
+                pages[previous].localPosition = _position;
+                _position.x = Mathf.Lerp(-screenWidth, 0f, transitionCurve.Evaluate(timeSpent/pageTransitionDuration));
+                pages[next].localPosition = _position;
             }
 
             timeSpent += Time.deltaTime;
@@ -135,14 +129,14 @@ public class UIManager : MonoBehaviour
         }
 
         UnBlockAllButtons(true);
-        Pages[previous].gameObject.SetActive(false);
+        pages[previous].gameObject.SetActive(false);
     }
 
     private void UnBlockAllButtons(bool pointer)
     {
         List<Button> buttonsList = new List<Button>();
 
-        foreach (var page in Pages)
+        foreach (var page in pages)
         {
             if (page.gameObject.activeSelf)
             {
@@ -159,7 +153,7 @@ public class UIManager : MonoBehaviour
 
     private void OffAllPages()
     {
-        foreach (var page in Pages)
+        foreach (var page in pages)
         {
             page.gameObject.SetActive(false);
         }
