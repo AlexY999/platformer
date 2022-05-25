@@ -1081,8 +1081,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d11e30d641006124ab808d1e244030c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SFXAudioSource: {fileID: 3445398532261968642}
-  MusicAudioSource: {fileID: 3445398532414690946}
+  sfxAudioSource: {fileID: 3445398532261968642}
+  musicAudioSource: {fileID: 3445398532414690946}
   buttonClickAudioClip: {fileID: 8300000, guid: 4cb55e2084a872b4fa4051ba3320c8a7, type: 3}
   musicAudioClip:
   - {fileID: 8300000, guid: 2d6b1584c8b3da84d9efabafb80ab5f8, type: 3}

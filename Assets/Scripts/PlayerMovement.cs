@@ -1,8 +1,13 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+	public Action OnCoinCollected;
+	public Action OnDeath;
+	public Action OnWin;
+
 	[SerializeField] private float speed = 5f;
 	[SerializeField] private float jumpForce = 2f;
 	[SerializeField] private float damageFromAttack = 40f;
@@ -17,6 +22,8 @@ public class PlayerMovement : MonoBehaviour
 	private static readonly int SpeedTag = Animator.StringToHash("Speed");
 	private static readonly int AttackTag = Animator.StringToHash("Attack");
 	private static readonly int JumpTag = Animator.StringToHash("Jump");
+	private static readonly int DieTag = Animator.StringToHash("Die");
+	private static readonly int HitTag = Animator.StringToHash("hit");
 	
 	private bool _onGround = true;
 
@@ -70,7 +77,7 @@ public class PlayerMovement : MonoBehaviour
 			_sr.flipX = false;
 		}
 	}
-	
+
 	private void OnCollisionEnter2D(Collision2D collision)
 	{
 		if (!collision.gameObject.TryGetComponent<CollisionZone>(out var zone)) return;
@@ -103,16 +110,21 @@ public class PlayerMovement : MonoBehaviour
 		{
 			if (triggerZone.Type == TriggerZoneType.Death)
 			{
+				_animator.SetTrigger(DieTag);
+				_animator.SetFloat(SpeedTag, 0);
 				Debug.Log("You are died!");
+				OnDeath?.Invoke();
 			}
 			else if (triggerZone.Type == TriggerZoneType.Coins)
 			{
+				OnCoinCollected?.Invoke();
 				triggerZone.gameObject.SetActive(false);
 				Debug.Log("You are collect the coin");
 			}
 			else if (triggerZone.Type == TriggerZoneType.End)
 			{
 				Debug.Log("You are complete the level");
+				OnWin?.Invoke();
 			}
 		}
 	}

@@ -3,37 +3,39 @@ using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 
 public class AudioManager : MonoBehaviour
 {
-    [SerializeField] private AudioSource SFXAudioSource;
-    [SerializeField] private AudioSource MusicAudioSource;
+    [SerializeField] private AudioSource sfxAudioSource;
+    [SerializeField] private AudioSource musicAudioSource;
     [Space]
     [SerializeField] private AudioClip buttonClickAudioClip;
     [SerializeField] private List<AudioClip> musicAudioClip;
 
-    private bool SFXPointer = true;
-    private bool musicPointer = true;
-    private int currentMusicAudioClip = 0;
+    private bool _sfxPointer = true;
+    private bool _musicPointer = true;
+    private int _currentMusicAudioClip = 0;
+    private string _currentSceneName;
     
-    private static AudioManager instance;
+    private static AudioManager _instance;
 
     public static AudioManager Instance()
     {
-        return instance;
+        return _instance;
     }
 
     private void Awake()
     {
-        if (instance == null)
+        if (_instance == null)
         {
-            instance = this;
+            _instance = this;
         }
-        else if (instance == this)
+        else if (_instance == this)
         {
             Destroy(gameObject);
         }
-        else if (instance == AudioManager.instance)
+        else if (_instance == AudioManager._instance)
         {
             Destroy(gameObject);
         }
@@ -41,12 +43,12 @@ public class AudioManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    public void ChangeSFXSoudsPointer(bool pointer)
+    public void ChangeSfxSoudsPointer(bool pointer)
     {
         if(pointer)
-            SFXPointer = true;
+            _sfxPointer = true;
         else
-            SFXPointer = false;
+            _sfxPointer = false;
 
         TurnMusicSFX();
     }
@@ -54,43 +56,43 @@ public class AudioManager : MonoBehaviour
     public void ChangeMusicSoudsPointer(bool pointer)
     {
         if(pointer)
-            musicPointer = true;
+            _musicPointer = true;
         else
-            musicPointer = false;
+            _musicPointer = false;
         
         TurnMusicSFX();
     }
 
-    public bool GetSFXSoudsPointer()
+    public bool GetSfxSoudsPointer()
     {
-        return SFXPointer;
+        return _sfxPointer;
     }
 
     public bool GetMusicSoudsPointer()
     {
-        return musicPointer;
+        return _musicPointer;
     }
 
     public void OnButtonClickPlayAudioClip()
     {
-        SFXAudioSource.PlayOneShot(buttonClickAudioClip);
+        sfxAudioSource.PlayOneShot(buttonClickAudioClip);
     }
 
-    public void PlayMusic()
+    private void PlayMusic()
     {
-        MusicAudioSource.clip = musicAudioClip[currentMusicAudioClip];
-        MusicAudioSource.Play();
+        musicAudioSource.clip = musicAudioClip[_currentMusicAudioClip];
+        musicAudioSource.Play();
         
-        if (currentMusicAudioClip + 1 != musicAudioClip.Count)
-            currentMusicAudioClip++;
+        if (_currentMusicAudioClip + 1 != musicAudioClip.Count)
+            _currentMusicAudioClip++;
         else
-            currentMusicAudioClip = 0;
+            _currentMusicAudioClip = 0;
     }
 
     private void TurnMusicSFX()
     {
-        SFXAudioSource.volume = SFXPointer ? 1 : 0;
-        MusicAudioSource.volume = musicPointer ? 1 : 0;
+        sfxAudioSource.volume = _sfxPointer ? 1 : 0;
+        musicAudioSource.volume = _musicPointer ? 1 : 0;
     }
     
     void OnEnable()
@@ -100,7 +102,11 @@ public class AudioManager : MonoBehaviour
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        PlayMusic();
+        if (string.IsNullOrEmpty(_currentSceneName) || _currentSceneName != scene.name)
+        {
+            _currentSceneName = scene.name;
+            PlayMusic();
+        }
     }
 
     void OnDisable()

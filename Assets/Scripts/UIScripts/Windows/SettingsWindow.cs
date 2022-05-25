@@ -11,14 +11,14 @@ public class SettingsWindow : MonoBehaviour
 
     private void Start()
     {
-        SFXToggle.isOn = AudioManager.Instance().GetSFXSoudsPointer();
+        SFXToggle.isOn = AudioManager.Instance().GetSfxSoudsPointer();
         MusicToggle.isOn = AudioManager.Instance().GetMusicSoudsPointer();
     }
 
     public void OnSFXButtonClick(bool pointer)
     {
         UIManager.Instance().OnButtonClisk();
-        AudioManager.Instance().ChangeSFXSoudsPointer(pointer);
+        AudioManager.Instance().ChangeSfxSoudsPointer(pointer);
     }
     
     public void OnMusicButtonClick(bool pointer)
